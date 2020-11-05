@@ -1,0 +1,103 @@
+  <header>
+    <div>
+      <h1>Intax Invoicing System</h1>
+    </div>
+    <mat-icon (click)="toggleTheme()" title="Change theme">format_color_fill</mat-icon>
+  </header>
+  <form [formGroup]="userTable">
+      <table class="table table-border" [ngClass]="{'table-dark': mode}">
+        <thead class="text-nowrap">
+         
+          <th>Bill No.<span class="ui-column-resizer" dragableColumn> </span></th>
+          <th>Invoice Date<span class="ui-column-resizer" dragableColumn> </span></th>
+          <th>State<span class="ui-column-resizer" dragableColumn> </span></th>
+          <th>GST NO<span class="ui-column-resizer" dragableColumn> </span></th>
+          <th>GST Rate<span class="ui-column-resizer" dragableColumn> </span></th>
+          <th>Amount</th>
+          <th></th>
+        </thead>
+        <tbody>
+          <ng-container formArrayName="tableRows" *ngFor="let group of getFormControls.controls ; let i=index">
+            <tr *ngIf="group.get('isEditable').value" [formGroupName]="i">
+              <td>
+                <mat-form-field>
+                  <input matInput type="tetx" formControlName="bill">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput matInput [matDatepicker]="picker" formControlName="date">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <mat-select formControlName="state">
+                    <mat-option *ngFor="let state of states" [value]="state.value">
+                      {{state.viewValue}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput type="text" formControlName="gstn">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <mat-select formControlName="rates">
+                    <mat-option *ngFor="let gstrate of gstrates" [value]="gstrate.value">
+                      {{gstrate.viewValue}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput type="text" formControlName="amount">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-icon class="delete" (click)="deleteRow(i)">delete_forever</mat-icon>
+                <mat-icon class="done" (click)="doneRow(group)">done</mat-icon>
+              </td>
+            </tr>
+            <tr *ngIf="!group.get('isEditable').value" >
+
+              <td>
+                {{group.get('bill').value}}
+              </td>
+              <td>
+                  {{group.get('date').value}}
+              </td>
+              <td>
+                  {{group.get('state').value}}
+              </td>
+              <td>
+                {{group.get('gstn').value}}
+              </td>
+              <td>
+                {{group.get('rates').value}}
+              </td>
+              <td>
+                {{group.get('amount').value}}
+              </td>
+              <td>
+                <mat-icon class="edit" (click)="editRow(group)">edit</mat-icon>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+      <div class="action-container">
+        <button mat-raised-button type="submit" (click)="addRow()">Add row</button>
+        <button mat-raised-button [disabled]="userTable.invalid" type="submit" (click)="submitForm()">Submit</button>
+      </div>
+    </form>
+    <div class="output">
+      <p>Form Data:  {{userTable.value | json}}</p>
+        <p>Is Valid: {{userTable.valid}}</p>
+    </div>
+
